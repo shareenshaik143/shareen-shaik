@@ -38,17 +38,12 @@ This library provides a simple location component, `LocationFetcher`, requiring 
 
 If the device's location services are disabled, or if your app is not allowed location permissions by the user, this library will automatically ask the user to enable location services in settings or to allow the necessary permissions as soon as you start collecting the `LocationFetcher.location` flow.
 
-The service uses GPS and network as location providers by default and thus the app needs to declare use of the `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION` permissions on its `AndroidManifest.xml`. Those permissions are already declared in this library, so manifest merging takes care of it.
-
-You can personalize your `LocationRequest` to suit your needs using the custom configuration block.
 
 ## Installation with Gradle
 
 ### Setup Maven Central on project-level build.gradle
 
 This library is hosted in Maven Central, so you must set it up for your project before adding the module-level dependency.
-
-#### New way
 
 The new way to install dependencies repositories is through the `dependencyResolutionManagement` DSL in `settings.gradle(.kts)`.
 
@@ -58,23 +53,8 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
     }
-}
-```
+   }
 
-OR
-
-#### Old way
-
-On project-level `build.gradle`:
-
-Kotlin or Groovy:
-```kotlin
-allprojects {
-  repositories {
-    mavenCentral()
-  }
-}
-```
 
 ### Add dependency
 
@@ -101,31 +81,6 @@ locationFetcher({ getString(R.string.location_rationale) }) {
 Alternatively, there are some `LocationFetcher()` method overloads. You can see all public builders [in here](https://github.com/psteiger/LocationFetcher/blob/master/locationfetcher/src/main/java/com/freelapp/libs/locationfetcher/Builders.kt).
 
 If `LocationFetcher` is created with a `ComponentActivity` or `Fragment`, it will be able to show dialogs to request the user to enable permission in Android settings and to allow the app to obtain the device's location. If `LocationFetcher` is created with a non-UI `Context`, it won't be able to show dialogs.
-
-#### Permission rationale
-
-In accordance with Google's best practices and policies, if user denies location permission, we must tell the user the rationale for the need of the user location, then we can ask permission a last time. If denied again, we must respect the user's decision.
-
-The rationale must be passed to `LocationFetcher` builders. It will be shown to the user as an `AlertDialog`.
-
-### Collecting location
-
-Once instantiated, the component gives you three `Flow`s to collect: one for new locations, one for settings status, and one for location permissions status. Usually, you only need to collect the location flow, as errors also flow through it already.
-
-```kotlin
-val LocationFetcher.location: SharedFlow<Either<Nel<LocationFetcher.Error>, Location>> // Nel stands for non-empty list.
-val LocationFetcher.permissionStatus: SharedFlow<Boolean>
-val LocationFetcher.settingsStatus: SharedFlow<Boolean>
-```
-
-To manually request location permissions or location settings enablement, you can call the following APIs:
-
-```kotlin
-suspend fun requestLocationPermissions()
-suspend fun requestEnableLocationSettings()
-```
-
-Results will be delivered on the aforementioned flows.
 
 ### Options
 
